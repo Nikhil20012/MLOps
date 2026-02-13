@@ -6,7 +6,7 @@ import time
 import pendulum
 import requests
 from airflow import DAG
-from airflow.providers.standard.operators.python import PythonOperator
+from airflow.operators.python import PythonOperator
 from flask import Flask, redirect, render_template
 
 # ---------- Config (Airflow 3: use REST with Basic Auth via FAB API backend) ----------

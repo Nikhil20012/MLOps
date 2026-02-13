@@ -1,3 +1,41 @@
+# Airflow Lab 2 - Personalized Implementation
+
+**Student:** Nikhil Yellapragada  
+**Student ID:** 002567331  
+**Course:** Data Analytics Engineering
+**University:** Northeastern University  
+**Semester:** Spring 2026  
+**GitHub:** https://github.com/Nikhil20012/MLOps
+
+## My Modifications
+
+This implementation includes the following personalizations to distinguish it from the original repo:
+
+1. **Email Notifications:** 
+   - Customized subject line: "Airflow Lab 2 - Pipeline Completed by Nikhil Yellapragada"
+   - Personalized HTML content with student name, course, and university information
+
+2. **Success Page (success.html):**
+   - Custom gradient background (purple theme)
+   - Added student information panel with name, course, university, and lab details
+   - Enhanced styling with modern CSS including shadows and rounded corners
+
+3. **DAG Configuration:**
+   - Updated owner to "Nikhil Yellapragada - Northeastern University"
+   - Changed retry logic from 0 to 2 retries with 5-minute delay for better reliability
+   - Modified start_date to 2024-02-13
+   - Updated DAG description with personalized information
+
+4. **DAG Metadata:**
+   - Custom tags: mlops, machine-learning, nikhil-yellapragada
+   - Updated owner_links to personal GitHub repository
+
+5. **SMTP Configuration:**
+   - Configured Gmail SMTP with app-specific password
+   - Email sent to: nikhil.yellapragada@gmail.com
+
+---
+
 # Airflow Lab Instructions and Description
 
 ## Introduction

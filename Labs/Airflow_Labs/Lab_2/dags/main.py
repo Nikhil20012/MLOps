@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import pendulum
+from datetime import timedelta
 from airflow import DAG
-from airflow.providers.standard.operators.bash import BashOperator
-from airflow.providers.standard.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.smtp.operators.smtp import EmailOperator
-from airflow.providers.standard.operators.trigger_dagrun import TriggerDagRunOperator
-from airflow.task.trigger_rule import TriggerRule
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
+from airflow.utils.trigger_rule import TriggerRule
 
 from src.model_development import (
     load_data,
@@ -19,19 +20,21 @@ from src.model_development import (
 
 # ---------- Default args ----------
 default_args = {
-    "start_date": pendulum.datetime(2024, 1, 1, tz="UTC"),
-    "retries": 0,
+    "owner": "Nikhil Yellapragada - Northeastern University",
+    "start_date": pendulum.datetime(2024, 2, 13, tz="UTC"),
+    "retries": 2,  # Changed from 0 to 2 for better reliability
+    "retry_delay": timedelta(minutes=5),
 }
 
 # ---------- DAG ----------
 dag = DAG(
     dag_id="Airflow_Lab2",
     default_args=default_args,
-    description="Airflow-Lab2 DAG Description",
+    description="ML Pipeline for Advertising Data - Created by Nikhil Yellapragada, Northeastern University Data Analytics Engineering",
     schedule="@daily",
     catchup=False,
-    tags=["example"],
-    owner_links={"Ramin Mohammadi": "https://github.com/raminmohammadi/MLOps/"},
+    tags=["mlops", "machine-learning", "nikhil-yellapragada"],
+    owner_links={"Nikhil Yellapragada": "https://github.com/Nikhil20012/MLOps"},
     max_active_runs=1,
 )
 
@@ -44,11 +47,16 @@ owner_task = BashOperator(
 )
 
 send_email = EmailOperator(
-    task_id="send_email",
-    to="rey.mhmmd@gmail.com",
-    subject="Notification from Airflow",
-    html_content="<p>This is a notification email sent from Airflow.</p>",
-    dag=dag,
+    task_id='send_email',
+    to='nikhil.yellapragada@gmail.com',
+    subject='Airflow Lab 2 - Pipeline Completed by Nikhil Yellapragada',
+    html_content=""" 
+    <h3>Machine Learning Pipeline Completed Successfully!</h3>
+    <p>Student: Nikhil Yellapragada</p>
+    <p>Course: Data Analytics Engineering - Northeastern University</p>
+    <p>The advertising data model has been trained and saved.</p>
+    """,
+    dag=dag
 )
 
 load_data_task = PythonOperator(
