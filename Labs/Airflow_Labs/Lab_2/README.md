@@ -1,142 +1,285 @@
-# Airflow Lab 2 - Personalized Implementation
+# Airflow Lab 2 - ML Pipeline with Automated Notifications
 
-**Student:** Nikhil Yellapragada  
+**Author:** Nikhil Yellapragada  
 **Student ID:** 002567331  
-**Course:** Data Analytics Engineering
+**Course:** Data Analytics Engineering  
 **University:** Northeastern University  
 **Semester:** Spring 2026  
 **GitHub:** https://github.com/Nikhil20012/MLOps
 
-## My Modifications
+---
 
-This implementation includes the following personalizations to distinguish it from the original repo:
+## Project Overview
 
-1. **Email Notifications:** 
-   - Customized subject line: "Airflow Lab 2 - Pipeline Completed by Nikhil Yellapragada"
-   - Personalized HTML content with student name, course, and university information
+This project uses Apache Airflow to automate a machine learning pipeline. It processes advertising data, trains a predictive model, sends email notifications when done, and provides a web API to check the status. Everything runs in Docker containers.
 
-2. **Success Page (success.html):**
-   - Custom gradient background (purple theme)
-   - Added student information panel with name, course, university, and lab details
-   - Enhanced styling with modern CSS including shadows and rounded corners
+### What This Does
 
-3. **DAG Configuration:**
-   - Updated owner to "Nikhil Yellapragada - Northeastern University"
-   - Changed retry logic from 0 to 2 retries with 5-minute delay for better reliability
-   - Modified start_date to 2024-02-13
-   - Updated DAG description with personalized information
-
-4. **DAG Metadata:**
-   - Custom tags: mlops, machine-learning, nikhil-yellapragada
-   - Updated owner_links to personal GitHub repository
-
-5. **SMTP Configuration:**
-   - Configured Gmail SMTP with app-specific password
-   - Email sent to: nikhil.yellapragada@gmail.com
+The system loads advertising data, cleans it, trains a machine learning model, saves the model, and then notifies you via email. You can also check the pipeline status through a web interface.
 
 ---
 
-# Airflow Lab Instructions and Description
+## Technologies Used
 
-## Introduction
-This document provides a detailed breakdown of the two DAGs (`Airflow_Lab2` and `Airflow_Lab2_Flask`) along with explanations of each function within the DAG files. These explanations aim to clarify the purpose and functionality of each task and function in the Airflow workflows.
+- Apache Airflow 2.9.2
+- Docker and Docker Compose
+- Python 3.12
+- Flask
+- scikit-learn
+- pandas
+- Gmail SMTP
 
+---
 
-Watch the tutorial video for this lab at [Airflow Lab2 Tutorial Video](https://youtu.be/LwBFOyfN5TY)
+## My Modifications
+
+**Email Notifications**
+- Changed the email subject to include my name
+- Created custom HTML email content with my student information and course details
+- Configured it to send to my Gmail account
+
+**Success Page**
+- Redesigned the success.html page with a purple gradient background
+- Added a panel showing my name, student ID, course, university, and lab information
+- Improved the styling with modern CSS including shadows and rounded corners
+
+**Pipeline Configuration**
+- Updated the owner field to "Nikhil Yellapragada - Northeastern University"
+- Changed the retry setting from 0 to 2 retries with 5-minute delays between attempts
+- Modified the start date to February 13, 2024
+- Updated the description to include my name
+- Added custom tags: mlops, machine-learning, nikhil-yellapragada
+- Changed the owner link to point to my GitHub repository
+
+**Flask API Improvements**
+- Added a new /student-info endpoint that returns my project information in JSON format
+- Updated the Flask DAG owner information
+- Added better logging messages when the Flask server starts
+- Included personalized tags and descriptions
+
+**Infrastructure Changes**
+- Modified docker-compose.yaml to expose port 5555 so the Flask API is accessible from my browser
+- Set up SMTP connection in Airflow for Gmail
+- Made both DAGs use consistent dates and settings
+
+---
 
 ## Prerequisites
-Before proceeding with this lab, ensure the following prerequisites are met:
 
-- Basic understanding of Apache Airflow concepts.
-- Apache Airflow installed and configured.
-- Necessary Python packages installed, including Flask.
+- Docker Desktop with at least 4GB of memory allocated
+- Git
+- Gmail account with 2-Step Verification enabled
+- Basic knowledge of Apache Airflow
 
+---
 
-## Airflow Email Configuration
+## Setup Instructions
 
-### Sign in with app passwords
-Follow the instruction provided here: [link](https://support.google.com/accounts/answer/185833) and get your smtp password
+**Step 1: Clone the Repository**
+```bash
+git clone https://github.com/Nikhil20012/MLOps.git
+cd MLOps/Labs/Airflow_Labs/Lab_2
+```
 
-### Adding SMTP Information to airflow.cfg
+**Step 2: Get a Gmail App Password**
 
-To configure Airflow to send emails, you need to add SMTP information to the `airflow.cfg` file. Follow these steps:
+Go to https://myaccount.google.com/apppasswords and create a new app password. Name it "Airflow" and copy the 16-character password. Remove any spaces from it and save it for later.
 
-1. Locate the `airflow.cfg` file in your Airflow installation directory.
-2. Open the file using a text editor.
-3. Search for the `[smtp]` section in the configuration file.
-4. Update the following parameters with your SMTP server information:
-   - `smtp_host`: Hostname of the SMTP server.
-   - `smtp_starttls`: Set it to `True` if your SMTP server uses TLS.
-   - `smtp_ssl`: Set it to `True` if your SMTP server uses SSL.
-   - `smtp_user`: Your SMTP username.
-   - `smtp_password`: Your SMTP password.
-   - `smtp_port`: Port number of the SMTP server (e.g., 587 for TLS, 465 for SSL).
-5. Save the changes to the `airflow.cfg` file.
+**Step 3: Download Docker Configuration**
+```bash
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.9.2/docker-compose.yaml'
+```
 
-for our lab assuming you have a gmail account you can use the following setting:
-   - smtp_host = smtp.gmail.com
-   - smtp_starttls = True
-   - smtp_ssl = False
-   - smtp_user = YOUREMAIL@gmail.com
-   - smtp_password = Enter your password generated above
-   - smtp_port = 587
-   - smtp_mail_from = YOUREMAIL@gmail.com
-   - smtp_timeout = 30
-   - smtp_retry_limit = 5
+**Step 4: Create Folders**
+```bash
+mkdir -p logs plugins working_data
+```
 
-After updating the SMTP information, Airflow will use the configured SMTP server to send email notifications.
+**Step 5: Set Up Environment File**
 
+For Mac/Linux:
+```bash
+echo "AIRFLOW_UID=$(id -u)" > .env
+```
 
-## DAG Structure
+For Windows, create a file called .env and put this in it:
+```
+AIRFLOW_UID=50000
+```
 
-### `Airflow_Lab2`
-This DAG orchestrates a machine learning pipeline and notification system. Let's break down each function within this DAG:
+**Step 6: Edit docker-compose.yaml**
 
-1. **`notify_success(context)` and `notify_failure(context)` Functions:**
-   - These functions define email notifications for task success and failure, respectively. They utilize the `EmailOperator` to send emails with predefined content and subject to a specified recipient (in this case, `rey.mhmmd@gmail.com`).
+Open the docker-compose.yaml file and make these changes:
 
-2. **`default_args` Dictionary:**
-   - This dictionary defines default arguments for the DAG, including the start date and the number of retries in case of task failure.
+Change LOAD_EXAMPLES to false:
+```yaml
+AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+```
 
-3. **`dag` Definition:**
-   - This section creates the main DAG instance (`Airflow_Lab2`) with various parameters such as description, schedule interval, catchup behavior, and tags.
-   
-4. **`owner_task` BashOperator:**
-   - This task echoes `1` and is assigned to an owner (`Ramin Mohammadi`). It represents a simple demonstration task with a linked owner.
+Add Python packages:
+```yaml
+_PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:- flask scikit-learn scipy pandas numpy}
+```
 
-5. **`send_email` EmailOperator:**
-   - This task sends a notification email upon DAG completion. It utilizes the `notify_success` and `notify_failure` functions as callbacks for success and failure, respectively.
+In the volumes section, add:
+```yaml
+- ${AIRFLOW_PROJ_DIR:-.}/working_data:/opt/airflow/working_data
+```
 
-6. **PythonOperator Tasks:**
-   - These tasks execute Python functions (`load_data`, `data_preprocessing`, `separate_data_outputs`, `build_model`, `load_model`) representing different stages of a machine learning pipeline. They perform data loading, preprocessing, model building, and model loading tasks.
+Update admin credentials:
+```yaml
+_AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow2}
+_AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow2}
+```
 
-7. **`TriggerDagRunOperator` Task:**
-   - This task triggers the `Airflow_Lab2_Flask` DAG upon successful completion of the main DAG. It ensures that the Flask API is launched after the machine learning pipeline completes successfully.
+In the airflow-worker section, add:
+```yaml
+airflow-worker:
+  command: celery worker
+  ports:
+    - "5555:5555"
+```
 
-### `Airflow_Lab2_Flask`
-This DAG manages the Flask API's lifecycle and consists of the following function:
+**Step 7: Initialize Airflow**
+```bash
+docker compose up airflow-init
+```
 
-1. **`check_dag_status()` Function:**
-   - This function queries the status of the last DAG run (`Airflow_Lab2`). It returns `True` if the DAG run was successful, and `False` otherwise.
+Wait until you see "exited with code 0". This takes 2-3 minutes.
 
-2. **`handle_api_request()` Function:**
-   - This function handles API requests and redirects users to `/success` or `/failure` routes based on the status of the last DAG run.
+**Step 8: Start Airflow**
+```bash
+docker compose up
+```
 
-3. **Flask Routes and HTML Templates:**
-   - The Flask routes (`/api`, `/success`, `/failure`) define endpoints for accessing the API and displaying success or failure pages. These routes render HTML templates (`success.html`, `failure.html`) with appropriate messages.
+Wait until you see a message about "GET /health HTTP/1.1" 200. Keep this terminal window open.
 
-4. **`start_flask_app()` Function:**
-   - This function starts the Flask server, enabling users to access the API endpoints.
+**Step 9: Open Airflow in Your Browser**
 
-5. **`start_flask_API` PythonOperator:**
-   - This task executes the `start_flask_app()` function to initiate the Flask server. It represents the starting point for the Flask API's lifecycle.
+Go to http://localhost:8080 and log in with:
+- Username: airflow2
+- Password: airflow2
 
-## Conclusion
-In this project, we've constructed a robust workflow using Apache Airflow to orchestrate a machine learning pipeline and manage a Flask API for monitoring purposes. The Airflow_Lab2 DAG coordinates various tasks, including data loading, preprocessing, model building, and email notification upon completion. By leveraging PythonOperators and BashOperator, we've encapsulated each step of the machine learning process, allowing for easy scalability and maintenance.
+**Step 10: Set Up Email Connection**
 
-Additionally, the integration of email notifications enhances the workflow's visibility, providing stakeholders with timely updates on task success or failure. This ensures proactive monitoring and quick response to any issues that may arise during pipeline execution.
+In Airflow, click Admin, then Connections. Click the plus button and fill in:
 
-Furthermore, the Airflow_Lab2_Flask DAG facilitates the management of a Flask API, enabling users to access endpoints for checking the status of the machine learning pipeline. By querying the last DAG run status, the API delivers real-time feedback, empowering users to make informed decisions based on the pipeline's performance.
+- Connection Id: smtp_default
+- Connection Type: SMTP
+- Host: smtp.gmail.com
+- Login: your email address
+- Password: your 16-character app password without spaces
+- Port: 587
+- From email: your email address
+- Disable TLS: Leave unchecked
+- Disable SSL: Check this box
 
-Overall, this project demonstrates the power of Apache Airflow in orchestrating complex workflows and integrating external systems seamlessly. By following the provided instructions and understanding the workflow's structure, users can leverage Airflow to streamline their machine learning pipelines and enhance operational efficiency.
+Click Save.
 
+**Step 11: Run the Pipeline**
+
+Find the Airflow_Lab2 DAG in the list. Toggle the switch to turn it on. Click the play button and select "Trigger DAG". Watch the tasks turn green in the Graph view. This takes 2-3 minutes. Check your email for the completion notification.
+
+**Step 12: Check the Flask API**
+
+Once the pipeline finishes, wait about 30 seconds, then open:
+
+- http://localhost:5555/success
+- http://localhost:5555/student-info
+- http://localhost:5555/health
+
+---
+
+## Project Structure
+```
+Lab_2/
+├── dags/
+│   ├── main.py
+│   ├── Flask_API.py
+│   ├── data/
+│   │   └── advertising.csv
+│   ├── src/
+│   │   └── model_development.py
+│   └── templates/
+│       ├── success.html
+│       └── failure.html
+├── docker-compose.yaml
+├── .env
+└── README.md
+```
+
+---
+
+## How the Pipeline Works
+
+The main pipeline runs these tasks in order:
+
+1. task_using_linked_owner
+2. load_data_task
+3. data_preprocessing_task
+4. separate_data_outputs_task
+5. build_save_model_task
+6. load_model_task
+7. my_trigger_task
+8. send_email
+
+The pipeline retries failed tasks twice with 5-minute waits between attempts.
+
+---
+
+## Flask API Endpoints
+
+**/success** - Custom page with purple gradient background and student information
+
+**/failure** - Failure page if something went wrong
+
+**/student-info** - JSON data with project information
+
+**/health** - Health check endpoint
+
+---
+
+## Troubleshooting
+
+**DAGs not showing up**
+
+Wait 30-60 seconds for Airflow to scan the folder.
+
+**Email not sending**
+
+Make sure your app password has no spaces. Verify 2-Step Verification is enabled. Check SMTP settings use port 587.
+
+**Cannot access Flask API**
+
+Check that port 5555 is in docker-compose.yaml under airflow-worker. Make sure Airflow_Lab2_Flask DAG is running.
+
+**Docker running out of memory**
+
+Increase Docker Desktop memory to at least 4GB in settings.
+
+---
+
+## Stopping the Lab
+
+Press Ctrl+C in the terminal, then run:
+```bash
+docker compose down
+```
+
+---
+
+## Files Modified
+
+- main.py - Owner, retries, email content, tags, description
+- Flask_API.py - Custom endpoint, owner, tags
+- success.html - Complete redesign with styling and information
+- docker-compose.yaml - Port 5555, credentials
+- README.md - Written from scratch
+
+---
+
+## Contact
+
+Nikhil Yellapragada  
+nikhil.yellapragada@gmail.com  
+https://github.com/Nikhil20012/MLOps
