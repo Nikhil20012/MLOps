@@ -15,7 +15,7 @@ This project uses Apache Airflow to automate a machine learning pipeline. It pro
 
 ### What This Does
 
-The system loads advertising data, cleans it, trains a machine learning model, saves the model, and then notifies you via email. You can also check the pipeline status through a web interface.
+The system loads advertising data, cleans it, trains a machine learning model using Support Vector Machine, saves the model, and then notifies you via email. You can also check the pipeline status through a web interface.
 
 ---
 
@@ -25,7 +25,7 @@ The system loads advertising data, cleans it, trains a machine learning model, s
 - Docker and Docker Compose
 - Python 3.12
 - Flask
-- scikit-learn
+- scikit-learn (SVM classifier)
 - pandas
 - Gmail SMTP
 
@@ -56,6 +56,13 @@ The system loads advertising data, cleans it, trains a machine learning model, s
 - Updated the Flask DAG owner information
 - Added better logging messages when the Flask server starts
 - Included personalized tags and descriptions
+
+**Machine Learning Model**
+- Changed the classifier from Logistic Regression to Support Vector Machine (SVM)
+- Configured SVM with RBF kernel, C=1.0, and gamma='scale' for better classification
+- Added random_state=42 for reproducibility
+- Enhanced model training with better performance on non-linear advertising data patterns
+- Updated function documentation to reflect the model change
 
 **Infrastructure Changes**
 - Modified docker-compose.yaml to expose port 5555 so the Flask API is accessible from my browser
@@ -218,8 +225,8 @@ The main pipeline runs these tasks in order:
 2. load_data_task
 3. data_preprocessing_task
 4. separate_data_outputs_task
-5. build_save_model_task
-6. load_model_task
+5. build_save_model_task (trains SVM model)
+6. load_model_task (evaluates SVM model)
 7. my_trigger_task
 8. send_email
 
@@ -271,9 +278,10 @@ docker compose down
 ## Files Modified
 
 - main.py - Owner, retries, email content, tags, description
-- Flask_API.py - Custom endpoint, owner, tags
-- success.html - Complete redesign with styling and information
-- docker-compose.yaml - Port 5555, credentials
-- README.md - Written from scratch
+- Flask_API.py - Custom endpoint, owner, tags, logging
+- success.html - Complete redesign with gradient styling and student information
+- model_development.py - Changed ML model from Logistic Regression to SVM
+- docker-compose.yaml - Port 5555 exposure, credentials
+- README.md - Written from scratch with comprehensive documentation
 
 ---
