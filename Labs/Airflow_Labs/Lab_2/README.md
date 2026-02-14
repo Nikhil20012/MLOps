@@ -277,9 +277,3 @@ docker compose down
 - README.md - Written from scratch
 
 ---
-
-## Contact
-
-Nikhil Yellapragada  
-nikhil.yellapragada@gmail.com  
-https://github.com/Nikhil20012/MLOps
