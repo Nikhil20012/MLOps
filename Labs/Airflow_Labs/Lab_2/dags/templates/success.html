@@ -3,56 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operation Status</title>
+    <title>Pipeline Success - Nikhil Yellapragada</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
-            margin: 0;
-            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
-        .status-container {
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            border-radius: 8px;
+        .container {
+            background: white;
             padding: 40px;
-            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 600px;
         }
-        .status-header {
-            font-size: 32px;
-            color: #4CAF50;
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
         }
-        .status-message {
-            font-size: 20px;
-            color: #555;
-            margin-top: 20px;
+        .success-icon {
+            font-size: 80px;
+            color: #4caf50;
+            margin-bottom: 20px;
         }
-        .status-details {
-            font-size: 16px;
-            color: #666;
-            margin-top: 10px;
-            font-style: italic;
+        .info {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .info p {
+            margin: 10px 0;
+            color: #333;
+        }
+        .label {
+            font-weight: bold;
+            color: #667eea;
         }
     </style>
 </head>
 <body>
-    <div class="status-container">
-        <div class="status-header">
-            Success!
+    <div class="container">
+        <div class="success-icon">✓</div>
+        <h1>ML Pipeline Successful!</h1>
+        <p>The advertising model training pipeline completed successfully.</p>
+        
+        <div class="info">
+            <p><span class="label">Student:</span> Nikhil Yellapragada</p>
+            <p><span class="label">Student ID:</span> 002567331</p>
+            <p><span class="label">Course:</span> Data Analytics Engineering</p>
+            <p><span class="label">University:</span> Northeastern University</p>
+            <p><span class="label">Lab:</span> Airflow Lab 2 - MLOps</p>
+            <p><span class="label">Date:</span> <span id="date"></span></p>
+            <p><span class="label">Time:</span> <span id="time"></span></p>
         </div>
-        <div class="status-message">
-            The model's run/training was successful.
-        </div>
-        <div class="status-details">
-            Date: <span id="date"></span><br>
-            Time: <span id="time"></span>
-        </div>
+        
+        <p style="color: #666; margin-top: 20px;">
+            Model trained on advertising dataset using scikit-learn and orchestrated with Apache Airflow.
+        </p>
     </div>
+    
     <script>
         const dateElement = document.getElementById('date');
         const timeElement = document.getElementById('time');
@@ -64,7 +80,7 @@
         }
 
         updateDateTime();
-        setInterval(updateDateTime, 1000); // Update time every second
+        setInterval(updateDateTime, 1000);
     </script>
 </body>
 </html>
