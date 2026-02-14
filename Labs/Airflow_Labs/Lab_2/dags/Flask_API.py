@@ -7,7 +7,7 @@ import pendulum
 import requests
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from flask import Flask, redirect, render_template
+from flask import Flask, redirect, render_template, jsonify
 
 # ---------- Config (Airflow 3: use REST with Basic Auth via FAB API backend) ----------
 WEBSERVER = os.getenv("AIRFLOW_WEBSERVER", "http://airflow-apiserver:8080")
@@ -17,7 +17,8 @@ TARGET_DAG_ID = os.getenv("TARGET_DAG_ID", "Airflow_Lab2")
 
 # ---------- Default args ----------
 default_args = {
-    "start_date": pendulum.datetime(2024, 1, 1, tz="UTC"),
+    "owner": "Nikhil Yellapragada - Northeastern University",
+    "start_date": pendulum.datetime(2024, 2, 13, tz="UTC"),
     "retries": 0,
 }
 
@@ -78,12 +79,45 @@ def failure():
 def health():
     return "ok", 200
 
+@app.route("/student-info")
+def student_info():
+    """
+    Custom endpoint - Student and project information
+    Created by: Nikhil Yellapragada
+    """
+    return jsonify({
+        "student": "Nikhil Yellapragada",
+        "student_id": "002567331",
+        "course": "Data Analytics Engineering",
+        "university": "Northeastern University",
+        "semester": "Spring 2026",
+        "lab": "Airflow Lab 2 - ML Pipeline with Notifications",
+        "github": "https://github.com/Nikhil20012/MLOps",
+        "technologies": [
+            "Apache Airflow 2.9.2",
+            "Docker",
+            "Flask",
+            "Python scikit-learn",
+            "Gmail SMTP"
+        ],
+        "modifications": [
+            "Personalized email notifications",
+            "Custom success page with gradient styling",
+            "Updated DAG configurations and metadata",
+            "Added student-info API endpoint"
+        ]
+    })
+
 def start_flask_app():
     """
     Run Flask dev server in-process; task intentionally blocks to keep API alive.
     Disable reloader to avoid forking inside Airflow worker.
+    Modified by: Nikhil Yellapragada
     """
     print("Starting Flask on 0.0.0.0:5555 ...", flush=True)
+    print("Custom endpoints available:", flush=True)
+    print("  - /success (custom styled)", flush=True)
+    print("  - /student-info (project metadata)", flush=True)
     app.run(host="0.0.0.0", port=5555, use_reloader=False)
     # If app.run ever returns, keep the task alive:
     while True:
@@ -93,11 +127,11 @@ def start_flask_app():
 flask_api_dag = DAG(
     dag_id="Airflow_Lab2_Flask",
     default_args=default_args,
-    description="DAG to manage Flask API lifecycle",
+    description="Flask API for ML Pipeline Status Monitoring - Modified by Nikhil Yellapragada",
     schedule=None,                 # trigger-only
     catchup=False,
     is_paused_upon_creation=False,
-    tags=["Flask_Api"],
+    tags=["Flask_Api", "nikhil-yellapragada", "mlops"],
     max_active_runs=1,
 )
 
