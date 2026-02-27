@@ -30,16 +30,16 @@ In this updated version, significant improvements and changes were made compared
 ```
 Lab1/
 ├── Dockerfile
-├── requirements.txt
 ├── README.md
 └── src/
-    └── main.py
+    ├── main.py
+    └── requirements.txt
 ```
 
 | File | Description |
 |---|---|
 | `Dockerfile` | Instructions to build the Docker image |
-| `requirements.txt` | Python dependencies |
+| `src/requirements.txt` | Python dependencies |
 | `src/main.py` | Script to train the ML model |
 | `README.md` | This file |
 
