@@ -1,10 +1,11 @@
 mlflow
 scikit-learn
-hyperopt
+optuna
 pandas
 numpy
 seaborn
 matplotlib
 xgboost==1.7.6
-pyspark
+cloudpickle
+requests
 ipykernel
