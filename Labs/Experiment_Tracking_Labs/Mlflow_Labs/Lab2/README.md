@@ -60,14 +60,22 @@ The system loads the Forest Cover Type dataset, trains a Random Forest baseline 
 
 ```
 Lab2/
-├── cover_type_mlflow.py        
-├── starter.ipynb               
-├── requirements.txt            
-├── README.md                   
-└── data/
-    ├── winequality-red.csv
-    ├── winequality-white.csv
-    └── winequality.names
+├── cover_type_mlflow.py
+├── starter.ipynb
+├── requirements.txt
+├── README.md
+├── batch_inference_results.csv
+├── class_distribution.png
+├── random_forest_classification_report.txt
+├── random_forest_confusion_matrix.png
+├── rf_feature_importance.png
+├── xgboost_classification_report.txt
+├── xgboost_confusion_matrix.png
+├── data/
+│   ├── winequality-red.csv
+│   ├── winequality-white.csv
+│   └── winequality.names
+└── Wine Quality Prediction Lab Documentation.pdf
 ```
 
 | File | Description |
@@ -75,6 +83,13 @@ Lab2/
 | `cover_type_mlflow.py` | Main script for training, tracking, registration, and inference |
 | `starter.ipynb` | Original lab notebook (unchanged) |
 | `requirements.txt` | Python dependencies |
+| `batch_inference_results.csv` | Output from batch inference on 500 samples |
+| `class_distribution.png` | EDA plot of cover type class distribution |
+| `random_forest_classification_report.txt` | Classification report for Random Forest |
+| `random_forest_confusion_matrix.png` | Confusion matrix for Random Forest |
+| `rf_feature_importance.png` | Top 15 feature importances for Random Forest |
+| `xgboost_classification_report.txt` | Classification report for XGBoost |
+| `xgboost_confusion_matrix.png` | Confusion matrix for XGBoost |
 | `README.md` | This file |
 
 ## Setup Instructions
