@@ -90,7 +90,7 @@ Lab2/
 | `rf_feature_importance.png` | Top 15 feature importances for Random Forest |
 | `xgboost_classification_report.txt` | Classification report for XGBoost |
 | `xgboost_confusion_matrix.png` | Confusion matrix for XGBoost |
-| `README.md` | This file |
+| `README.md` | Current file |
 
 ## Setup Instructions
 
