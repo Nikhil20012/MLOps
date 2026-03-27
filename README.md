@@ -1,124 +1,87 @@
-# Cloud Runner Basic Lab
+[![pages-build-deployment](https://github.com/raminmohammadi/MLOps/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/raminmohammadi/MLOps/actions/workflows/pages/pages-build-deployment)
 
-Welcome to the beginners lab on Google Cloud Run! In this lab, you will learn to deploy a containerized application on Google Cloud Run, monitor its performance, and scale it based on traffic needs.
+# DADS 7305 - MLOps
 
----
+## Overview
 
-## Step-by-Step Guide
+Welcome to the MLOps Repository! This repository is dedicated to sharing reading contents, labs and exercises for the MLOps (Machine Learning Operations) course at Northeastern University. The primary goal of this repository is to provide a centralized platform for students, instructors, and anyone interested in MLOps to access and collaborate on course-related materials. You can learn more on Machine learning topics by watching my videos on [Youtube](https://www.youtube.com/channel/UCCGbsdfmgmhMLs-tjOtOp0Q) or visit my [Website](https://www.mlwithramin.com/). 
 
-### Step 1: Set Up Google Cloud Project
+## Table of Contents
 
-1. **Create a Google Cloud Project**:
-   - Go to the [Google Cloud Console](https://console.cloud.google.com/).
-   - Create a new project and give it a meaningful name (e.g., `cloud_runner_lab`).
+- [Introduction](#introduction)
+- [Course Description](#course-description)
+- [Lab Content](#lab-content)
+- [Getting Started](#getting-started)
+- [Contributing](#contributing)
+- [License](#license)
 
-2. **Enable Necessary APIs**:
-   - In the Console, navigate to `APIs & Services > Library`.
-   - Enable the **Cloud Run API** and the **Container Registry API**.
+## Introduction
 
----
+MLOps is an emerging discipline that focuses on the collaboration and communication of both data scientists and IT professionals while automating and streamlining the machine learning lifecycle. It bridges the gap between machine learning development and production deployment, ensuring that machine learning models are scalable, reproducible, and maintainable. This repository serves as a resource hub for students and instructors of Northeastern University's MLOps course.
 
-### Step 2: Create and Containerize the Application
+## Course Description
 
-1. **Create a Simple Flask Application**:
-   - Write a basic Flask application in Python to use as your project.
-   - Example `app.py`:
-     ```python
-     from flask import Flask
+The MLOps course at Northeastern University is designed to provide students with a comprehensive understanding of the MLOps field. Throughout the course, students will learn how to:
 
-     app = Flask(__name__)
+- Build end-to-end machine learning pipelines
+- Deploy machine learning models to production
+- Monitor and maintain ML systems
+- Implement CI/CD/CM/CT (Continuous Integration/Continuous Deployment/Continuous Monitoring/Continuous Training) for ML
+- Containerize and orchestrate ML workloads
+- Handle data drift and model retraining
+- **Apply LLMOps practices to large language models (LLMs), including evaluation, alignment, monitoring, deployment, and lifecycle management**
 
-     @app.route('/')
-     def hello_world():
-         return "Hello, World!"
+This repository hosts the labs, code samples, and documentation related to these topics.
 
-     if __name__ == "__main__":
-         app.run(host="0.0.0.0", port=8080)
-     ```
+## Labs Content
 
-2. **Create a Dockerfile**:
-   - In the same directory as your Flask app, create a Dockerfile to containerize the application.
-   - Example Dockerfile:
-     ```Dockerfile
-     FROM python:3.8-slim
+This repository offers a series of hands-on labs designed to enhance your understanding of MLOps and LLMOps concepts. Each lab focuses on a specific aspect of the machine learning lifecycle, providing practical experience with tools and methodologies essential for deploying and managing both traditional ML models and modern LLMs in production environments.  
 
-     WORKDIR /app
-     COPY . /app
-     RUN pip install flask
+Students will gain hands-on experience with:
 
-     EXPOSE 8080
-     CMD ["python", "app.py"]
-     ```
+- Containerization, orchestration, and CI/CD pipelines  
+- ML model monitoring, retraining, and handling data drift  
+- **LLMOps labs for evaluation, monitoring, alignment, and responsible AI practices**  
+- Deployment strategies for large language models at scale  
 
-3. **Build the Docker Image**:
-   - Ensure Docker is running on your local machine.
-   - In the terminal, navigate to the app’s directory and build the Docker image:
-     ```bash
-     docker build -t gcr.io/YOUR_PROJECT_ID/hello-world .
-     ```
+Each lab is accompanied by detailed instructions and code examples to facilitate hands-on learning. It's recommended to follow the labs sequentially, as concepts build upon each other. For additional resources and support, refer to the [Reading Materials](./Labs/Reading%20Materials) section of this repository.
 
----
+## Getting Started
 
-### Step 3: Push the Docker Image to Container Registry
+To get started with the labs and exercises in this repository, please follow these steps:
 
-1. **Authenticate with Google Cloud**:
-   - Set up authentication with Google Cloud using the following command:
-     ```bash
-     gcloud auth configure-docker
-     ```
+1. Clone this repository to your local machine.
+2. Navigate to the specific lab you are interested in.
+3. Read the lab instructions and review any accompanying documentation.
+4. Follow the provided code samples and examples to complete the lab exercises.
+5. Feel free to explore, modify, and experiment with the code to deepen your understanding.
 
-2. **Push the Docker Image**:
-   - Tag and push your Docker image to the Container Registry:
-     ```bash
-     docker tag gcr.io/YOUR_PROJECT_ID/hello-world gcr.io/YOUR_PROJECT_ID/hello-world
-     docker push gcr.io/YOUR_PROJECT_ID/hello-world
-     ```
+For more detailed information on each lab and prerequisites, please refer to the lab's README or documentation.
 
----
+## Contributing
 
-### Step 4: Deploy to Google Cloud Run
+Contributions to this repository are welcome! If you are a student or instructor and would like to contribute your own labs, improvements, or corrections, please follow these guidelines:
 
-1. **Navigate to Cloud Run in Google Console**:
-   - Go to the **Cloud Run** service in the Google Cloud Console.
-   - Click **Create Service**.
+1. Fork this repository.
+2. Create a branch for your changes.
+3. Make your changes and commit them with clear, concise messages.
+4. Test your changes to ensure they work as expected.
+5. Submit a pull request to the main repository.
 
-2. **Configure the Deployment**:
-   - Select **Deploy a container image** and choose the image you pushed to the Container Registry.
-   - Set the **Region** (e.g., `us-central1`) and provide a **Service name**.
-   - For **Authentication**, select "Allow unauthenticated invocations" if you want the app to be publicly accessible.
+Your contributions will help improve the overall quality of the labs and benefit the entire MLOps community.
 
-3. **Deploy the Application**:
-   - Click **Create** to deploy the service. This process may take a few minutes.
-   - Once deployed, Cloud Run will provide a URL for your application.
+## Reference:
+The reading materials of this repo was collected from Coursera under the Creative Commons License.
 
----
+## License
+This repository is licensed under the MIT License. For more details, please refer to the LICENSE file.
 
-### Step 5: Access and Test the Application
+**NEU-Specific Restriction:**  
+While the MIT License applies generally, the use, reproduction, or distribution of this content for the same or similar courses **within Northeastern University (NEU)** is **strictly prohibited** without prior written permission.
 
-- **Access the URL** provided by Cloud Run to test your application.
-- You should see the message "Hello, World!" displayed if everything is working correctly.
+## 🌟 Star History
 
----
+[![Star History Chart](https://api.star-history.com/svg?repos=raminmohammadi/MLOps&type=Date)](https://star-history.com/#raminmohammadi/MLOps&Date)
 
-### Step 6: Monitor and Scale the Service
-
-1. **Monitor Metrics**:
-   - Use the Cloud Run Console to monitor various metrics such as request count, response latency, and memory usage.
-   - These metrics help you understand traffic and performance patterns.
-
-2. **Auto-Scaling**:
-   - Cloud Run automatically scales your service based on incoming traffic.
-   - You can configure the minimum and maximum number of instances if needed to control scaling.
-
----
-
-## Conclusion
-
-Congratulations on completing the Cloud Runner Basic Lab! In this lab, you:
-
-- Set up a Google Cloud project and enabled necessary APIs.
-- Created and containerized a Flask application.
-- Deployed it to Google Cloud Run and accessed it via a public URL.
-- Monitored and scaled the service based on demand.
-
-This lab provided a foundational understanding of Google Cloud Run and how to deploy containerized applications in a serverless environment. Enjoy exploring more with Google Cloud!
+## Contributors
+[![MLOPs contributors](https://contrib.rocks/image?repo=raminmohammadi/MLOps)](https://github.com/raminmohammadi/MLOps/graphs/contributors)
