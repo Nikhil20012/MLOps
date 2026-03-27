@@ -254,10 +254,10 @@ The container runs the following steps in order:
 
 ## Files Modified
 
-- `app.py` — Built from scratch with Wine dataset, Random Forest model, and 4 REST API endpoints
-- `requirements.txt` — Added `scikit-learn` and `numpy` with pinned versions
-- `Dockerfile` — Updated base image to `python:3.9-slim`, optimized layer caching
-- `README.md` — Written from scratch with comprehensive documentation
+- `app.py` - Built from scratch with Wine dataset, Random Forest model, and 4 REST API endpoints
+- `requirements.txt` - Added `scikit-learn` and `numpy` with pinned versions
+- `Dockerfile` - Updated base image to `python:3.9-slim`, optimized layer caching
+- `README.md` - Written from scratch with comprehensive documentation
 
 ---
 
