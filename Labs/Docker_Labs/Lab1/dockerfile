@@ -1,0 +1,15 @@
+# Use official Python 3.10 slim image as base
+FROM python:3.10-slim
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy requirements.txt from src/ and install dependencies
+COPY src/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the source code
+COPY src/ .
+
+# Command to run the ML script
+CMD ["python", "main.py"]

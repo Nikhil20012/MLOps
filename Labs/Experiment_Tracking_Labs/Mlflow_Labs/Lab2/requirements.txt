@@ -1,0 +1,11 @@
+mlflow
+scikit-learn
+optuna
+pandas
+numpy
+seaborn
+matplotlib
+xgboost==1.7.6
+cloudpickle
+requests
+ipykernel
