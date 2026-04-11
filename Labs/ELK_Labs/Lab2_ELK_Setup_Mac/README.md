@@ -48,7 +48,7 @@ Replaced the plain-text `basicConfig` logger with a **custom JSON formatter**. E
 Added regression-specific metrics beyond what the original lab tracked:
 - MSE (Mean Squared Error)
 - RMSE (Root Mean Squared Error)
-- R² Score
+- R2 Score
 - Model coefficients and intercept
 - Alpha (regularization strength)
 - Feature names
@@ -68,7 +68,7 @@ Added regression-specific metrics beyond what the original lab tracked:
 | Testing Samples | 4,128 |
 | MSE | 0.5559 |
 | RMSE | 0.7456 |
-| R² Score | 0.5758 |
+| R2 Score | 0.5758 |
 | Alpha | 1.0 |
 
 ---
@@ -106,7 +106,7 @@ xpack.ml.enabled: false
 xpack.security.enabled: false
 ```
 
-### Step 3: Install Logstash (manual — Homebrew formula broken on Apple Silicon)
+### Step 3: Install Logstash (manual install, Homebrew formula is broken on Apple Silicon)
 
 ```bash
 curl -O https://artifacts.elastic.co/downloads/logstash/logstash-7.17.4-darwin-x86_64.tar.gz
@@ -146,17 +146,18 @@ cat training.log | LS_JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
 ### Step 8: Visualize in Kibana
 
 1. Go to http://localhost:5601
-2. **Stack Management** → **Index Patterns** → **Create index pattern**
-3. Enter `ridge-training-logs*` → Next → select `@timestamp` → Create
-4. Go to **Discover** → select `ridge-training-logs*`
+2. **Stack Management** -> **Index Patterns** -> **Create index pattern**
+3. Enter `ridge-training-logs*` -> Next -> select `@timestamp` -> Create
+4. Go to **Discover** -> select `ridge-training-logs*`
 5. Set time range to **Last 1 year**
 
 ---
 
 ## Project Structure
+
 Lab2_ELK_Setup_Mac/
 ├── train_model.py        # Ridge Regression training with JSON logging
-├── logstash.conf         # Logstash pipeline config (stdin → ES)
+├── logstash.conf         # Logstash pipeline config (stdin to ES)
 ├── training.log          # Generated JSON log output
 └── README.md             # This file
 
@@ -174,13 +175,13 @@ Lab2_ELK_Setup_Mac/
 ## Troubleshooting
 
 **Elasticsearch fails to start**  
-Check `elasticsearch.yml` — remove `xpack.security.enrollment.enabled` if present (v8.x only setting).
+Check `elasticsearch.yml` and remove `xpack.security.enrollment.enabled` if present. That setting only exists in v8.x and will cause a startup error on 7.17.4.
 
 **Logstash file input crashes on Apple Silicon**  
 The x86 Logstash build has JRuby native library issues on macOS ARM. Use stdin with a pipe instead: `cat training.log | logstash -f logstash.conf`
 
 **No data in Kibana**  
-Set the time filter to "Last 1 year" — logs ingest with the current timestamp, not the log timestamp.
+Set the time filter to Last 1 year. Logs are ingested with the current timestamp, not the original log timestamp, so the default 15-minute window will show nothing.
 
 ---
 
@@ -188,6 +189,6 @@ Set the time filter to "Last 1 year" — logs ingest with the current timestamp,
 
 | File | Change |
 |------|--------|
-| `train_model.py` | Dataset (Iris → California Housing), model (Logistic → Ridge), logging (plaintext → JSON), metrics (accuracy → MSE/RMSE/R²) |
+| `train_model.py` | Dataset (Iris to California Housing), model (Logistic to Ridge), logging (plaintext to JSON), metrics (accuracy to MSE/RMSE/R2) |
 | `logstash.conf` | Removed grok filters, changed input to stdin, changed index name |
 | `README.md` | Written from scratch with full documentation |
