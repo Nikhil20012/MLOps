@@ -1,264 +1,193 @@
-# Setting Up ELK Stack for Logging and Training a LR Model
+# ELK Stack Lab - Ridge Regression on California Housing Dataset
 
-In this lab, we will walk through the process of setting up the ELK (Elasticsearch, Logstash, Kibana) stack for log management and visualization while training a Linear Regression (LR) model.
+**Author:** Nikhil Yellapragada  
+**Student ID:** 002567331  
+**Course:** Data Analytics Engineering  
+**University:** Northeastern University  
+**Semester:** Spring 2026  
+**GitHub:** https://github.com/Nikhil20012/MLOps
+
+---
+
+## Project Overview
+
+This project sets up the ELK (Elasticsearch, Logstash, Kibana) stack to manage and visualize logs generated during machine learning model training. It trains a Ridge Regression model on the California Housing dataset, logs key metrics in structured JSON format, ships the logs through Logstash into Elasticsearch, and visualizes them in Kibana.
+
+---
+
+## What This Does
+
+The system loads the California Housing dataset, scales the features, trains a Ridge Regression model with L2 regularization, logs training metrics in JSON format, pipes the logs through Logstash into Elasticsearch, and visualizes all log events in Kibana's Discover view.
+
+---
+
+## Technologies Used
+
+- Elasticsearch 7.17.4
+- Kibana 7.17.4
+- Logstash 7.17.4
+- Python 3.x
+- scikit-learn (Ridge Regression)
+- numpy
+- Homebrew (macOS)
+
+---
+
+## My Modifications
+
+### Dataset
+Changed from the original Iris dataset to the **California Housing dataset** from sklearn. This is a real-world regression dataset with 20,640 samples and 8 features predicting median house values across California districts.
+
+### Machine Learning Model
+Changed from **Logistic Regression** (classification) to **Ridge Regression** (regression with L2 regularization). Ridge adds a regularization term controlled by alpha to prevent overfitting on continuous target prediction tasks.
+
+### Logging Format
+Replaced the plain-text `basicConfig` logger with a **custom JSON formatter**. Each log line is a structured JSON object with `timestamp`, `level`, and `message` fields. This eliminates the need for grok filters in Logstash entirely.
+
+### Metrics Logged
+Added regression-specific metrics beyond what the original lab tracked:
+- MSE (Mean Squared Error)
+- RMSE (Root Mean Squared Error)
+- R² Score
+- Model coefficients and intercept
+- Alpha (regularization strength)
+- Feature names
+
+### Logstash Configuration
+- Removed all grok filters (not needed with JSON logging)
+- Changed input to `stdin` with `json` codec (file input plugin unsupported on Apple Silicon with x86 Logstash build)
+- Changed Elasticsearch index from `logstash-training` to `ridge-training-logs`
+
+---
+
+## Results
+
+| Metric | Value |
+|--------|-------|
+| Training Samples | 16,512 |
+| Testing Samples | 4,128 |
+| MSE | 0.5559 |
+| RMSE | 0.7456 |
+| R² Score | 0.5758 |
+| Alpha | 1.0 |
+
+---
 
 ## Prerequisites
-Make sure you have the following prerequisites in place:
 
-1. Java Installed: ELK stack requires Java to run. To check if Java is installed on your system, open your command line or terminal and run the following command:
+- Java 17 (via Homebrew `openjdk@17`)
+- Python 3.x with `scikit-learn` and `numpy`
+- Elasticsearch 7.17.4 (via Homebrew elastic tap)
+- Kibana 7.17.4 (via Homebrew elastic tap)
+- Logstash 7.17.4 (manual tar install)
 
-```commandline
-java -version
-```
-2. Java Home: Add the following line to your .bash_profile, replacing /path/to/java with the actual path you obtained in 
+---
 
-```commandline
-/usr/libexec/java_home
-```
-```commandline
-export JAVA_HOME = /path/to/java
-```
-Verify that JAVA_HOME is correctly set by running:
-```commandline
-echo $JAVA_HOME
-```
+## Setup Instructions
 
-# MacOS
+### Step 1: Install Elasticsearch and Kibana
 
-Watch the tutorial on how to setup ELK on mac at [ELK Mac setup](https://www.youtube.com/watch?v=4Lux9ZX6J4Y)
-
-
-## Elasticsearch
-Elasticsearch is a distributed, RESTful search, and analytics engine.
-
-#### Installation Steps:
-- Visit the Elasticsearch download page: [Elasticsearch Download](https://www.elastic.co/downloads/elasticsearch)
-
-- Select the appropriate version for your operating system (Windows, macOS).
-
-- Download the Elasticsearch package for your system.
-
-- Once the download is complete, extract the package to your preferred installation directory.
-
-- Open a terminal window.
-
-- Navigate to the Elasticsearch directory by using the `cd` command:
-```commandline
-cd /path/to/elasticsearch
-```
-- Once you are inside the Elasticsearch directory, go into the `bin` folder:
-- Start Elasticsearch by running the following command:
-```commandline
-./elasticsearch
-```
-- After Elasticsearch has started successfully, open a web browser and visit the following URL
-```plaintext
-http://localhost:9200
-```
-- If Elasticsearch is functioning correctly, you should see JSON content displayed in your web browser.
-
-- Add these two lines in the elasticsearch.yml file:
-  - xpack.ml.enabled: false  
-  - xpack.security.enabled: false
-  - xpack.security.enrollment.enabled: false
-
-## Kibana
-
-Kibana is a powerful data visualization and exploration tool for Elasticsearch.
-
-#### Installation Steps:
-- Visit the Kibana download page: [Kibana Download](https://www.elastic.co/downloads/kibana)
-
-- Select the appropriate version for your operating system (Windows, macOS).
-
-- Download the Kibana package for your system.
-
-- Once the download is complete, extract the package to your preferred installation directory.
-
-- Open a terminal window.
-
-- Navigate to the Kibana directory by using the `cd` command:
-```commandline
-cd /path/to/kibana
-```
-- Once you are inside the Kibana directory, go into the `bin` folder:
-- Start Kibana by running the following command:
-```commandline
-./kibana
-```
-- If you are using Windows, use this command instead:
-```commandline
-.\kibana.bat
-```
-- After Kibana has started successfully, open a web browser and visit the following URL
-```plaintext
-http://localhost:5601
-```
-## Logstash
-Logstash is a data processing pipeline tool that is often used in conjunction with Elasticsearch and Kibana to ingest, transform, and send data to Elasticsearch for indexing and storage.
-
-#### Installation Steps:
-- Visit the Logstash download page: [Logstash Download](https://www.elastic.co/downloads/logstash)
-
-- Select the appropriate version for your operating system (Windows, macOS).
-
-- Download the Logstash package for your system.
-
-- Once the download is complete, extract the package to your preferred installation directory.
-
-- Open a terminal window.
-- To test the working of Logstash.
-
-- Navigate to the Logstash directory by using the `cd` command:
-```commandline
-cd /path/to/logstash
-```
-- Start Logstash by running the following command:
-```commandline
-bin/logstash -e 'input{stdin{}} output{stdout{}}'
-```
-- This will prompt the user to provide input for which it returns a log in the terminal
-
-## Logging
-Let's setup the logging for the LR machine learning model and log the relevant information using the Python logging library to integrate with Logstash for centralized log management.
-```python
-logging.basicConfig(filename='training.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-```
-This configuration ensures that log messages are written to the `training.log` file.
-
-The following information will be logged:
-- Start of model training.
-- Number of training samples.
-- Number of testing samples.
-- Completion of model training.
-- Model accuracy on test data.
-- Model coefficients.
-- Model intercept.
-
-#### Logstash.conf
-
-The `logstash.conf` file is a configuration file for Logstash, which is used to specify how Logstash should ingest, process, and output log data.
-
-```plaintext
-input {
-  file {
-    path => "/path/to/your/training.log"
-    start_position => "beginning"
-    sincedb_path => "/dev/null"
-    codec => "json" 
-  }
-}
+```bash
+brew tap elastic/tap
+brew install elastic/tap/elasticsearch-full
+brew install elastic/tap/kibana-full
 ```
 
-- `input`: This section specifies where Logstash should read log data from.
+### Step 2: Configure Elasticsearch
 
-- `file`: It is an input plugin that reads data from a file.
-
-- `path`: This field should be set to the path of the log file you want to ingest. In this example, it's set to "/path/to/your/training.log".
-
-- `start_position`: This option specifies where Logstash should start reading the log file. "beginning" means it will start from the beginning of the file.
-
-- `sincedb_path`: This option is used to store information about the current position in the log file. Setting it to "/dev/null" means that Logstash won't use a sincedb file, which is suitable for reading the entire file.
-
-- `codec`: This field specifies the codec to use for parsing log data. In this example, it's set to "json", which implies that the log data is in JSON format.
-
-```plaintext
-filter {
-  grok {
-    match => { "message" => "%{TIMESTAMP_ISO8601:timestamp} - %{LOGLEVEL:loglevel} - %{GREEDYDATA:message}" }
-  }
-  mutate {
-    rename => {
-      "timestamp" => "log_timestamp"
-      "loglevel" => "log_level"
-      "message" => "log_message"
-    }
-  }
-}
+```bash
+nano /opt/homebrew/etc/elasticsearch/elasticsearch.yml
 ```
 
-- `filter`: This section is used to process and transform the log data before it is sent to the output.
+Add at the bottom:
 
-- `grok`: It is a filter plugin that allows you to extract structured data from unstructured log messages. In this example, it's used to parse the log message into structured fields.
-- `match`: This field specifies the pattern to match in the log message using regular expressions. It extracts the timestamp, log level, and the remaining message text into separate fields.
-- `mutate`: This filter plugin is used to perform various operations on fields.
-- `rename`: It renames the fields extracted by the grok filter to more descriptive names, creating columns in the output data. For example, it renames "timestamp" to "log_timestamp," "loglevel" to "log_level," and "message" to "log_message."
-
-```plaintext
-output {
-  elasticsearch {
-    hosts => ["localhost:9200"]
-    index => "logstash-training"
-  }
-  stdout {
-    codec => rubydebug {
-      metadata => false # Disable metadata to clean up the output
-    }
-  }
-}
+```yaml
+xpack.ml.enabled: false
+xpack.security.enabled: false
 ```
 
-- `output`: This section defines where the processed log data should be sent.
+### Step 3: Install Logstash (manual — Homebrew formula broken on Apple Silicon)
 
-- `elasticsearch`: It specifies that the log data should be sent to an Elasticsearch instance.
-
-- `hosts`: This field should be set to the address and port of your Elasticsearch cluster. In this example, it's set to "localhost:9200".
-
-- `index`: It defines the name of the Elasticsearch index where the log data will be stored. In this example, it's set to "logstash-training".
-
-- `stdout`: This output plugin is used for debugging and displays log data to the console.
-
-- `codec`: It specifies how the data should be formatted when displayed. In this case, it uses the rubydebug codec.
-
-- `metadata`: It's set to false to disable including metadata in the console output, which helps keep the output clean.
-
-#### Visualise the logs
-
-To start Elasticsearch, Kibana, and Logstash and visualize logs in Kibana, follow these steps:
-
-`Starting Elasticsearch:` 
-- Open a terminal window.
-
-- Navigate to the Elasticsearch directory by using the `cd` command:
-```commandline
-cd /path/to/elasticsearch
-```
-- Once you are inside the Elasticsearch directory, go into the `bin` folder:
-- Start Elasticsearch by running the following command:
-```commandline
-./elasticsearch
-```
-- After Elasticsearch has started successfully, open a web browser and visit the following URL
-```plaintext
-http://localhost:9200
+```bash
+curl -O https://artifacts.elastic.co/downloads/logstash/logstash-7.17.4-darwin-x86_64.tar.gz
+tar -xzf logstash-7.17.4-darwin-x86_64.tar.gz
+mv logstash-7.17.4 /opt/homebrew/opt/logstash-full
 ```
 
-`Starting Kibana:` 
-- Open a terminal window.
+### Step 4: Start Elasticsearch (Tab 1)
 
-- Navigate to the Kibana directory by using the `cd` command:
-```commandline
-cd /path/to/kibana
-```
-- Once you are inside the Kibana directory, go into the `bin` folder:
-- Start Kibana by running the following command:
-```commandline
-./kibana
-```
-- After Kibana has started successfully, open a web browser and visit the following URL
-```plaintext
-http://localhost:5601
+```bash
+/opt/homebrew/opt/elasticsearch-full/bin/elasticsearch
 ```
 
-`Starting Logstash:` 
-- Open a terminal window.
+Verify at http://localhost:9200
 
-- Navigate to the logstash directory by using the `cd` command:
-```commandline
-cd /path/to/logstash
+### Step 5: Start Kibana (Tab 2)
+
+```bash
+/opt/homebrew/opt/kibana-full/bin/kibana
 ```
-- Once you are inside the Logstash directory, start Logstash by running the following command:
-```commandline
-bin/logstash -f /path/to/logstash.conf
+
+Verify at http://localhost:5601
+
+### Step 6: Train the Model
+
+```bash
+python train_model.py
 ```
-Now, you can access and visualize the logs in Kibana under the `Discover` section.
+
+### Step 7: Send Logs to Elasticsearch via Logstash
+
+```bash
+cat training.log | LS_JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
+  /opt/homebrew/opt/logstash-full/bin/logstash -f logstash.conf
+```
+
+### Step 8: Visualize in Kibana
+
+1. Go to http://localhost:5601
+2. **Stack Management** → **Index Patterns** → **Create index pattern**
+3. Enter `ridge-training-logs*` → Next → select `@timestamp` → Create
+4. Go to **Discover** → select `ridge-training-logs*`
+5. Set time range to **Last 1 year**
+
+---
+
+## Project Structure
+Lab2_ELK_Setup_Mac/
+├── train_model.py        # Ridge Regression training with JSON logging
+├── logstash.conf         # Logstash pipeline config (stdin → ES)
+├── training.log          # Generated JSON log output
+└── README.md             # This file
+
+---
+
+## How the Pipeline Works
+
+1. `train_model.py` trains Ridge Regression on California Housing data
+2. Structured JSON logs are written to `training.log`
+3. Logstash reads logs via stdin, renames fields, and ships to Elasticsearch
+4. Kibana visualizes all log events under the `ridge-training-logs` index
+
+---
+
+## Troubleshooting
+
+**Elasticsearch fails to start**  
+Check `elasticsearch.yml` — remove `xpack.security.enrollment.enabled` if present (v8.x only setting).
+
+**Logstash file input crashes on Apple Silicon**  
+The x86 Logstash build has JRuby native library issues on macOS ARM. Use stdin with a pipe instead: `cat training.log | logstash -f logstash.conf`
+
+**No data in Kibana**  
+Set the time filter to "Last 1 year" — logs ingest with the current timestamp, not the log timestamp.
+
+---
+
+## Files Modified from Original Lab
+
+| File | Change |
+|------|--------|
+| `train_model.py` | Dataset (Iris → California Housing), model (Logistic → Ridge), logging (plaintext → JSON), metrics (accuracy → MSE/RMSE/R²) |
+| `logstash.conf` | Removed grok filters, changed input to stdin, changed index name |
+| `README.md` | Written from scratch with full documentation |
