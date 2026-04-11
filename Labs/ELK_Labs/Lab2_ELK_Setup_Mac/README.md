@@ -155,11 +155,13 @@ cat training.log | LS_JAVA_HOME=/opt/homebrew/opt/openjdk@17 \
 
 ## Project Structure
 
+```
 Lab2_ELK_Setup_Mac/
 ├── train_model.py        # Ridge Regression training with JSON logging
 ├── logstash.conf         # Logstash pipeline config (stdin to ES)
 ├── training.log          # Generated JSON log output
 └── README.md             # This file
+```
 
 ---
 
